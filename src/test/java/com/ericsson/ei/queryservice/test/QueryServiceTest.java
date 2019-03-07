@@ -54,7 +54,7 @@ import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
 @SpringBootTest(classes = App.class)
 public class QueryServiceTest {
 
-    private static final Logger LOG = (Logger) LoggerFactory.getLogger(QueryServiceTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueryServiceTest.class);
 
     @Value("${aggregated.collection.name}")
     private String aggregationCollectionName;
@@ -90,7 +90,7 @@ public class QueryServiceTest {
 
     public static void setUpEmbeddedMongo() throws Exception {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
             mongoClient = testsFactory.newMongo();
             String port = "" + mongoClient.getAddress().getPort();
             System.setProperty("spring.data.mongodb.port", port);

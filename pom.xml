@@ -29,7 +29,7 @@
         <springLdapVersion>2.3.2.RELEASE</springLdapVersion>
         <springSecurityVersion>5.0.6.RELEASE</springSecurityVersion>
         <springSessionVersion>2.0.2.RELEASE</springSessionVersion>
-        <forkCountTests>2.5C</forkCountTests>
+        <forkCountTests>1</forkCountTests>
     </properties>
 
     <!-- Reporting Plugins -->
@@ -286,7 +286,7 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>2.0.0</version>
+            <version>2.2.0</version>
             <scope>test</scope>
         </dependency>
 

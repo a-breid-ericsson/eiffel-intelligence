@@ -97,7 +97,7 @@ public class SubscriptionServiceTest {
     @BeforeClass
     public static void setMongoDB() throws IOException, JSONException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
             mongoClient = testsFactory.newMongo();
             String port = "" + mongoClient.getAddress().getPort();
             System.setProperty("spring.data.mongodb.port", port);

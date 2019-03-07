@@ -28,7 +28,7 @@ public class FlowTestConfigs {
     private RabbitAdmin admin;
     private ConnectionFactory cf;
 
-    final static Logger LOGGER = (Logger) LoggerFactory.getLogger(FlowTestConfigs.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(FlowTestConfigs.class);
 
     @Getter
     private Connection conn;
@@ -66,7 +66,7 @@ public class FlowTestConfigs {
 
     private void setUpEmbeddedMongo() throws IOException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
             mongoClient = testsFactory.newMongo();
             String port = "" + mongoClient.getAddress().getPort();
             System.setProperty("spring.data.mongodb.port", port);

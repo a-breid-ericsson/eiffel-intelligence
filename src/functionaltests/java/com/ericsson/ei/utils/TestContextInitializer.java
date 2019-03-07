@@ -17,7 +17,7 @@ public class TestContextInitializer extends TestConfigs
 
         try {
             createAmqpBroker();
-            startUpMongoClient();
+            startUpMongoServerAndClient();
         } catch (Exception e) {
             LOGGER.error("Failed to startup Mongo client or AMQP broker for test");
         }

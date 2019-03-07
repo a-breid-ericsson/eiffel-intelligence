@@ -132,7 +132,7 @@ public class SubscriptionHandlerTest {
     private QueryResponse queryResponse;
 
     public static void setUpEmbeddedMongo() throws Exception {
-        testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+        testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
         mongoClient = testsFactory.newMongo();
         String port = "" + mongoClient.getAddress().getPort();
         System.setProperty("spring.data.mongodb.port", port);

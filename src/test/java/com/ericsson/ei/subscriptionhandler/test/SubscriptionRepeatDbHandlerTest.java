@@ -47,33 +47,33 @@ import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
     })
 public class SubscriptionRepeatDbHandlerTest {
 
-	
-    static Logger log = (Logger) LoggerFactory.getLogger(SubscriptionRepeatDbHandlerTest.class);
-	
+
+    static Logger log = LoggerFactory.getLogger(SubscriptionRepeatDbHandlerTest.class);
+
     private static SubscriptionRepeatDbHandler subsRepeatDbHandler = new SubscriptionRepeatDbHandler();
-    
+
     @Autowired
     private static MongoDBHandler mongoDBHandler;
-    
+
     private static MongoClient mongoClient;
     private static MongodForTestsFactory testsFactory;
 
     private static String subRepeatFlagDataBaseName = "eiffel_intelligence";
     private static String subRepeatFlagCollectionName = "subscription_repeat_handler";
-    
-    
+
+
 
 
     @BeforeClass
     public static void init() throws Exception {
-    testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+    testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
     mongoClient = testsFactory.newMongo();
     mongoDBHandler = new MongoDBHandler();
     mongoDBHandler.setMongoClient(mongoClient);
     String port = "" + mongoClient.getAddress().getPort();
     System.setProperty("spring.data.mongodb.port", port);
     subsRepeatDbHandler.mongoDbHandler = mongoDBHandler;
-    
+
     subsRepeatDbHandler.dataBaseName = subRepeatFlagDataBaseName;
     subsRepeatDbHandler.collectionName = subRepeatFlagCollectionName;
     }
@@ -83,36 +83,36 @@ public class SubscriptionRepeatDbHandlerTest {
         testsFactory.shutdown();
         mongoClient.close();
     }
-    
+
     @Before
     public void beforeTests() {
     	mongoDBHandler.dropCollection(subRepeatFlagDataBaseName, subRepeatFlagCollectionName);
     }
-    
+
     @Test
 	public void addOneNewMatchedAggrIdToDatabase() {
-    	
+
     	String subscriptionId = "12345";
 		int requirementId = 0;
 		String aggrObjId = "99999";
-		
+
 		String subscriptionQuery = "{\"subscriptionId\" : \"" + subscriptionId + "\"}";
-		
+
     	try {
 			subsRepeatDbHandler.addMatchedAggrObjToSubscriptionId(subscriptionId, requirementId, aggrObjId);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-    	
+
     	BasicDBObject dbResult = (BasicDBObject) JSON.parse(mongoDBHandler.find(subRepeatFlagDataBaseName, subRepeatFlagCollectionName, subscriptionQuery).get(0).toString());
-	
+
     	assertEquals(subscriptionId, dbResult.get("subscriptionId").toString());
-    	
+
     	String actual = dbResult.get("requirements").toString();
     	String expected = "{ \"0\" : [ " +  "\"" + aggrObjId + "\"" + "]}";
-    	
-    	
+
+
     	boolean result = true;
     	if (expected == actual) {
     		result = false;
@@ -121,87 +121,87 @@ public class SubscriptionRepeatDbHandlerTest {
     	}
 		assertEquals(true, result);
 	}
-    
+
     @Test
 	public void addTwoNewMatchedAggrIdToDatabase() {
-    	
+
     	String subscriptionId = "12345";
 		int requirementId = 0;
 		String aggrObjId = "99999";
-		
+
 	  	String subscriptionId2 = "98754";
 	  	int requirementId2 = 1;
 		String aggrObjId2 = "45678";
-		
+
 		String subscriptionQuery2 = "{\"subscriptionId\" : \"" + subscriptionId2 + "\"}";
-		
+
     	try {
 			subsRepeatDbHandler.addMatchedAggrObjToSubscriptionId(subscriptionId, requirementId, aggrObjId);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
     	try {
 			subsRepeatDbHandler.addMatchedAggrObjToSubscriptionId(subscriptionId2, requirementId2, aggrObjId2);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-    	
+
     	BasicDBObject dbResult = (BasicDBObject) JSON.parse(mongoDBHandler.find(subRepeatFlagDataBaseName, subRepeatFlagCollectionName, subscriptionQuery2).get(0).toString());
-	
+
     	assertEquals(subscriptionId2, dbResult.get("subscriptionId").toString());
-    	
+
     	String actual = dbResult.get("requirements").toString();
     	String expected = "{ \"" + requirementId2 + "\" : [ \"" + aggrObjId2 + "\"]}";
-    	
-    	
+
+
     	String msg = "\nACTUAL  : |" + actual + "|\nEXPECTED: |" + expected + "|";
     	boolean result = true;
     	if (!expected.equals(actual)) {
     		result = false;
         	log.error(msg);
     	}
-    	
+
 		assertEquals(msg, result, true);
-	}    
-    
+	}
+
     @Test
 	public void addTwoNewSameMatchedAggrIdToDatabase() {
-    	
+
     	String subscriptionId = "12345";
 		int requirementId = 0;
 		String aggrObjId = "99999";
-		
+
 	  	String subscriptionId2 = "12345";
 	  	int requirementId2 = 0;
 		String aggrObjId2 = "99998";
-		
+
 		String subscriptionQuery = "{\"subscriptionId\" : \"" + subscriptionId + "\"}";
 
-		
+
     	try {
 			subsRepeatDbHandler.addMatchedAggrObjToSubscriptionId(subscriptionId, requirementId, aggrObjId);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
     	try {
 			subsRepeatDbHandler.addMatchedAggrObjToSubscriptionId(subscriptionId2, requirementId2, aggrObjId2);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
-    	
+
     	BasicDBObject dbResult = (BasicDBObject) JSON.parse(mongoDBHandler.find(subRepeatFlagDataBaseName, subRepeatFlagCollectionName, subscriptionQuery).get(0).toString());
-	
+
     	assertEquals(subscriptionId2, dbResult.get("subscriptionId").toString());
     	log.error("DB REQUIREMENTS: " + dbResult.get("requirements").toString());
     	log.error("DB Content: " + dbResult.toString());
 
-    	
+
     	String actual = dbResult.get("requirements").toString();
     	String expected = "{ \"0\" : [ \"" + aggrObjId + "\" , \"" + aggrObjId2 + "\"]}";
     	String msg = "\nACTUAL  : |" + actual + "|\nEXPECTED: |" + expected + "|";

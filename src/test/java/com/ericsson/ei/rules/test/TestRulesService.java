@@ -30,14 +30,14 @@ import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {
-        App.class        
+        App.class
     })
 public class TestRulesService {
     private static final String EVENTS = "src/test/resources/AggregateListEvents.json";
     private static final String RULES = "src/test/resources/AggregateListRules.json";
     private static final String AGGREGATED_RESULT_OBJECT = "src/test/resources/AggregateResultObject.json";
 
-    final static Logger LOGGER = (Logger) LoggerFactory.getLogger(TestRulesService.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(TestRulesService.class);
 
     @Autowired
     private IRuleCheckService ruleCheckService;
@@ -51,7 +51,7 @@ public class TestRulesService {
     @BeforeClass
     public static void setMongoDB() throws IOException, JSONException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
             mongoClient = testsFactory.newMongo();
             String port = "" + mongoClient.getAddress().getPort();
             System.setProperty("spring.data.mongodb.port", port);

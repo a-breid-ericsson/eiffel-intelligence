@@ -44,7 +44,7 @@ import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
 
 public class ObjectHandlerTest {
 
-    final Logger log = (Logger) LoggerFactory.getLogger(ObjectHandlerTest.class);
+    final Logger log = LoggerFactory.getLogger(ObjectHandlerTest.class);
 
     private ObjectHandler objHandler = new ObjectHandler();
 
@@ -69,7 +69,7 @@ public class ObjectHandlerTest {
 
     public void setUpEmbeddedMongo() throws Exception {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V3_4_1);
+            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
             mongoClient = testsFactory.newMongo();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
