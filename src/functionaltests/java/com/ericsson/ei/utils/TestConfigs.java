@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +96,7 @@ public class TestConfigs {
                         .net(new Net(node2Port, Network.localhostIsIPv6())).build());
         node2Mongod = node2MongodExe.start();
 
-        mongo = new MongoClient(new ServerAddress(Network.getLocalHost(), node1Port));
+        mongo = new MongoClient(new ServerAddress(InetAddress.getByName("localhost"), node1Port));
 
         MongoDatabase adminDatabase = mongo.getDatabase("admin");
 
@@ -107,18 +108,18 @@ public class TestConfigs {
 
         adminDatabase.runCommand(new Document("replSetInitiate", config));
 
-        System.out.println(">>>>>>>>" + adminDatabase.runCommand(new Document("replSetGetStatus", 1)));
-
-        MongoDatabase funDb = mongo.getDatabase("fun");
-        MongoCollection<Document> testCollection = funDb.getCollection("test");
-
-        System.out.println(">>>>>>>> inserting data");
-
-        testCollection.insertOne(new Document("fancy", "value"));
-
-        System.out.println(">>>>>>>> finding data");
-
-        assert(testCollection.find().first().get("fancy").equals("value"));
+//        System.out.println(">>>>>>>>" + adminDatabase.runCommand(new Document("replSetGetStatus", 1)));
+//
+//        MongoDatabase funDb = mongo.getDatabase("fun");
+//        MongoCollection<Document> testCollection = funDb.getCollection("test");
+//
+//        System.out.println(">>>>>>>> inserting data");
+//
+//        testCollection.insertOne(new Document("fancy", "value"));
+//
+//        System.out.println(">>>>>>>> finding data");
+//
+//        assert(testCollection.find().first().get("fancy").equals("value"));
         System.setProperty("spring.data.mongodb.port", String.valueOf(node1Port));
     }
 
