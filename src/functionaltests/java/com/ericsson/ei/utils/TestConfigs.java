@@ -65,16 +65,16 @@ public class TestConfigs {
     }
 
     public void startUpMongoServerAndClient() throws IOException {
-        startUpMongoCluster();
-//        try {
-//            MongodForTestsFactory testsFactory = MongodForTestsFactory.with(Version.V3_4_5);
-//            mongoClient = testsFactory.newMongo();
-//            String port = "" + mongoClient.getAddress().getPort();
-//            System.setProperty("spring.data.mongodb.port", port);
-//            LOGGER.debug("Started embedded Mongo DB for tests on port: " + port);
-//        } catch (Exception e) {
-//            LOGGER.error(e.getMessage(), e);
-//        }
+        //startUpMongoCluster();
+        try {
+            MongodForTestsFactory testsFactory = MongodForTestsFactory.with(Version.V3_4_5);
+            mongoClient = testsFactory.newMongo();
+            String port = "" + mongoClient.getAddress().getPort();
+            System.setProperty("spring.data.mongodb.port", port);
+            LOGGER.debug("Started embedded Mongo DB for tests on port: " + port);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     public void startUpMongoCluster() throws IOException {
