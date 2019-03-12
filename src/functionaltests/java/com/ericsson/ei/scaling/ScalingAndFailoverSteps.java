@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,17 +58,17 @@ public class ScalingAndFailoverSteps extends FunctionalTestBase {
         LOGGER.debug("{} additional eiffel intelligence instance{} will start", multiple, plural);
         numberOfInstances = multiple + 1;
 
-        portList.add(this.port);
-        for (int i = 1; i < numberOfInstances; i++) {
-            portList.add(SocketUtils.findAvailableTcpPort());
-        }
+        portList.add(this.port);       
 
         mockMvcList.add(this.mockMvc);
         for (int i = 1; i < numberOfInstances; i++) {
-            LOGGER.debug("Starting instance on port: {}", portList.get(i));
+        	int nextPort = SocketUtils.findAvailableTcpPort(); 
+        	portList.add(nextPort);
+            LOGGER.debug("Starting instance on port: {}", nextPort);
+
             SpringApplicationBuilder appBuilder = new SpringApplicationBuilder(App.class);
 
-            System.setProperty("server.port", String.valueOf(portList.get(i)));
+            System.setProperty("server.port", String.valueOf(nextPort));
             System.setProperty("spring.jmx.default-domain", "eiffel-intelligence-" + i);
 
             WebApplicationContext appContext = (WebApplicationContext) appBuilder.run();
@@ -76,6 +77,9 @@ public class ScalingAndFailoverSteps extends FunctionalTestBase {
             mockMvcList.add(webAppContextSetup(appContext).build());
         }
 
+        System.setProperty("server.port", String.valueOf(portList.get(0)));
+        System.setProperty("spring.jmx.default-domain", "eiffel-intelligence-" + 0);
+        
         LOGGER.debug("Ports for all available instances");
         for (int i = 0; i < numberOfInstances; i++) {
             LOGGER.debug("Instance {}, Port: {}", i + 1, portList.get(i));
