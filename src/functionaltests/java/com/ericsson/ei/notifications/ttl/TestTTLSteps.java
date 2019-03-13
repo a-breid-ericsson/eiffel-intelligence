@@ -230,6 +230,7 @@ public class TestTTLSteps extends FunctionalTestBase {
         List<String> notificationExist = null;
 
         while (System.currentTimeMillis() < maxTime) {
+            LOGGER.debug("Looping to find missed notification, break loop in %d seconds.", (maxTime - System.currentTimeMillis())/1000);
             notificationExist = mongoDBHandler.find(missedNotificationDatabase, missedNotificationCollection, condition);
 
             if (notificationExist.size() == expectedSize) {

@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.ericsson.ei.App;
+import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.utils.HttpRequest;
 import com.ericsson.ei.utils.HttpRequest.HttpMethod;
 import com.ericsson.eiffelcommons.JenkinsManager;
@@ -48,6 +51,8 @@ import util.IntegrationTestBase;
 @ContextConfiguration(classes = App.class, loader = SpringBootContextLoader.class)
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class })
 public class FlowStepsIT extends IntegrationTestBase {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(FlowStepsIT.class);
 
     private String jenkinsJobName;
     private String jenkinsJobToken;
@@ -198,6 +203,7 @@ public class FlowStepsIT extends IntegrationTestBase {
         Boolean jobStatusDataFetched = false;
         long stopTime = System.currentTimeMillis() + 30000;
         while (jobStatusDataFetched == false && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify aggregated object in DB, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             try {
                 jobStatusData = jenkinsManager.getJenkinsBuildStatusData(this.jenkinsJobName);
                 jobStatusDataFetched = true;
@@ -242,6 +248,7 @@ public class FlowStepsIT extends IntegrationTestBase {
         long createdDateInMillis = 0;
 
         while (mailHasBeenDelivered == false && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify emails in DB, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             JsonNode newestMailJson = getNewestMailFromDatabase();
 
             if (newestMailJson != null) {

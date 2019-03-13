@@ -46,7 +46,7 @@ public class ThreadingAndWaitlistRepeatSteps extends FunctionalTestBase {
     @Before("@ThreadingAndWaitlistRepeatScenario")
     public void beforeScenario() throws IOException {
         tempLogFile = File.createTempFile("logfile", ".tmp");
-        tempLogFile.deleteOnExit(); 
+        tempLogFile.deleteOnExit();
         System.setOut(new PrintStream(tempLogFile));
     }
 
@@ -105,7 +105,8 @@ public class ThreadingAndWaitlistRepeatSteps extends FunctionalTestBase {
     public void after_the_time_to_live_has_ended_the_waitlist_should_be_empty() throws Throwable {
         long stopTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(waitlistTtl + 60);
         while (dbManager.waitListSize() > 0 && stopTime > System.currentTimeMillis()) {
-            TimeUnit.MILLISECONDS.sleep(10000);
+            LOGGER.debug("Looping to verify empty waitist, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
+            TimeUnit.MILLISECONDS.sleep(5000);
         }
         int waitListSize = dbManager.waitListSize();
         assertEquals(0, waitListSize);

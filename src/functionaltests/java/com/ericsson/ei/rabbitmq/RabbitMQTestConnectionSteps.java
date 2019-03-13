@@ -57,6 +57,7 @@ public class RabbitMQTestConnectionSteps extends FunctionalTestBase {
         long maxTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
 
         while (waitListSize != 4 && maxTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping for waitlist to have 4 events, break loop in %d seconds.", (maxTime - System.currentTimeMillis())/1000);
             eventManager.sendEiffelEvents(EIFFEL_EVENTS, eventNames);
             TimeUnit.SECONDS.sleep(2);
             waitListSize = dbManager.waitListSize();

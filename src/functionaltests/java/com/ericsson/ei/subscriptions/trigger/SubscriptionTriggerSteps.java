@@ -251,6 +251,7 @@ public class SubscriptionTriggerSteps extends FunctionalTestBase {
 
         long stopTime = System.currentTimeMillis() + 30000;
         while (!endpointsToCheck.isEmpty() && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to see that all endpoints got a call, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             for (String endpoint : endpoints) {
                 String restBodyData = mockClient.retrieveRecordedRequests(request().withPath(endpoint), Format.JSON);
                 int actualRestCalls = new JSONArray(restBodyData).length();
@@ -320,7 +321,10 @@ public class SubscriptionTriggerSteps extends FunctionalTestBase {
      */
     private void setupSMTPServer() throws IOException {
         boolean connected = false;
-        while (!connected) {
+        long stopTime = System.currentTimeMillis() + 30000;
+
+        while (!connected && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to setup smtp server, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             try {
                 int port = SocketUtils.findAvailableTcpPort();
                 LOGGER.debug("Setting SMTP port to " + port);

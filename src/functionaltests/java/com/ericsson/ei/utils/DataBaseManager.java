@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
@@ -16,10 +18,10 @@ import com.mongodb.client.MongoDatabase;
 
 import gherkin.deps.com.google.gson.JsonObject;
 import gherkin.deps.com.google.gson.JsonParser;
-import lombok.Getter;
 
 @Component
 public class DataBaseManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseManager.class);
 
     @Value("${spring.data.mongodb.database}")
     private String database;
@@ -57,6 +59,7 @@ public class DataBaseManager {
     public List<String> verifyAggregatedObjectInDB(List<String> checklist) throws InterruptedException {
         long stopTime = System.currentTimeMillis() + 30000;
         while (!checklist.isEmpty() && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify aggregated object in DB, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             checklist = compareArgumentsWithAggregatedObjectInDB(checklist);
             if (checklist.isEmpty()) {
                 break;
@@ -75,6 +78,7 @@ public class DataBaseManager {
     public boolean verifyAggregatedObjectExistsInDB() throws InterruptedException {
         long stopTime = System.currentTimeMillis() + 30000;
         while (stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify aggregated object in DB, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             mongoClient = new MongoClient(getMongoDbHost(), getMongoDbPort());
             MongoDatabase db = mongoClient.getDatabase(database);
             MongoCollection<Document> table = db.getCollection(aggregatedCollectionName);
@@ -120,6 +124,7 @@ public class DataBaseManager {
     public List<String> verifyEventsInDB(List<String> eventsIdList) throws InterruptedException {
         long stopTime = System.currentTimeMillis() + 30000;
         while (!eventsIdList.isEmpty() && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify events in DB, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
             eventsIdList = compareSentEventsWithEventsInDB(eventsIdList);
             if (eventsIdList.isEmpty()) {
                 break;
@@ -153,7 +158,7 @@ public class DataBaseManager {
 
     /**
      * Retrieve a value from a database query result
-     * 
+     *
      * @param key
      * @param index
      * @return String value matching the given key

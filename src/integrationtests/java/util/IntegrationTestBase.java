@@ -52,7 +52,7 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
     protected static final String MAILHOG_DATABASE_NAME = "mailhog";
     @Autowired
     protected MongoDBHandler mongoDBHandler;
-    @Value( "${ei.host:localhost}")
+    @Value("${ei.host:localhost}")
     protected String eiHost;
     @LocalServerPort
     protected int port;
@@ -102,7 +102,7 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
         rabbitTemplate = createRabbitMqTemplate();
     }
 
-    private void cleanDatabases(){
+    private void cleanDatabases() {
         mongoDBHandler.dropCollection(EIFFEL_INTELLIGENCE_DATABASE_NAME, aggregatedCollectionName);
         mongoDBHandler.dropCollection(EIFFEL_INTELLIGENCE_DATABASE_NAME, waitlistCollectionName);
         mongoDBHandler.dropCollection(EIFFEL_INTELLIGENCE_DATABASE_NAME, subscriptionCollectionName);
@@ -113,9 +113,8 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
     }
 
     /*
-     * setFirstEventWaitTime: variable to set the wait time after publishing the
-     * first event. So any thread looking for the events don't do it before actually
-     * populating events in the database
+     * setFirstEventWaitTime: variable to set the wait time after publishing the first event. So any
+     * thread looking for the events don't do it before actually populating events in the database
      */
     private int firstEventWaitTime = 0;
 
@@ -124,9 +123,8 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
     }
 
     /**
-     * Override this if you have more events that will be registered to event to
-     * object map but it is not visible in the test. For example from upstream or
-     * downstream from event repository
+     * Override this if you have more events that will be registered to event to object map but it is
+     * not visible in the test. For example from upstream or downstream from event repository
      *
      * @return
      */
@@ -186,17 +184,18 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
         URL eventsInput = new File(getEventsFilePath()).toURI().toURL();
         Iterator eventsIterator = objectMapper.readTree(eventsInput).fields();
 
-        while(eventsIterator.hasNext()) {
-            Map.Entry pair = (Map.Entry)eventsIterator.next();
+        LOGGER.debug("Looping to prepare events for flow test.");
+        while (eventsIterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) eventsIterator.next();
             eventNames.add(pair.getKey().toString());
-            }
+        }
+        LOGGER.debug("Event names added [%s].", eventNames);
 
         return eventNames;
     }
 
     /**
-     * @return map, where key - _id of expected aggregated object value - expected
-     *         aggregated object
+     * @return map, where key - _id of expected aggregated object value - expected aggregated object
      *
      */
     protected abstract Map<String, JsonNode> getCheckData() throws IOException;
@@ -208,6 +207,7 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
 
     /**
      * Wait for certain amount of events to be processed.
+     *
      * @param eventsCount - An int which indicated how many events that should be processed.
      * @return
      * @throws InterruptedException
@@ -217,6 +217,8 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
         long stopTime = System.currentTimeMillis() + 60000;
         long processedEvents = 0;
         while (processedEvents < eventsCount && stopTime > System.currentTimeMillis()) {
+            LOGGER.debug("Looping to verify that events has been processed, break loop in %d seconds.",
+                    (stopTime - System.currentTimeMillis()) / 1000);
             processedEvents = countProcessedEvents(database, event_map);
             LOGGER.info("Have gotten: " + processedEvents + " out of: " + eventsCount);
             TimeUnit.MILLISECONDS.sleep(1000);
@@ -225,7 +227,8 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
 
     /**
      * Counts documents that were processed
-     * @param database - A string with the database to use
+     *
+     * @param database   - A string with the database to use
      * @param collection - A string with the collection to use
      * @return amount of processed events
      */
@@ -239,13 +242,15 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
 
     /**
      * Retrieves the result from EI and checks if it equals the expected data
+     *
      * @param expectedData - A Map<String, JsonNode> which contains the expected data
      * @return
      * @throws URISyntaxException
      * @throws IOException
      * @throws InterruptedException
      */
-    private void checkResult(final Map<String, JsonNode> expectedData) throws IOException, URISyntaxException, InterruptedException {
+    private void checkResult(final Map<String, JsonNode> expectedData)
+            throws IOException, URISyntaxException, InterruptedException {
         Iterator iterator = expectedData.entrySet().iterator();
 
         JsonNode expectedJSON = null;
@@ -258,12 +263,13 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
             expectedJSON = (JsonNode) pair.getValue();
 
             long stopTime = System.currentTimeMillis() + 30000;
-            while(!foundMatch && stopTime > System.currentTimeMillis()) {
+            while (!foundMatch && stopTime > System.currentTimeMillis()) {
+                LOGGER.debug("Looping to match json data, break loop in %d seconds.", (stopTime - System.currentTimeMillis())/1000);
                 actualJSON = queryAggregatedObject(id);
 
                 /*
-                 * This is a workaround for expectedJSON.equals(acutalJSON) as that does not
-                 * work with strict equalization
+                 * This is a workaround for expectedJSON.equals(acutalJSON) as that does not work with strict
+                 * equalization
                  */
                 try {
                     JSONAssert.assertEquals(expectedJSON.toString(), actualJSON.toString(), false);
@@ -279,24 +285,22 @@ public abstract class IntegrationTestBase extends AbstractTestExecutionListener 
 
     /**
      * Retrieves the aggregatedObject from EI by querying
+     *
      * @param id - A string which contains the id used in the query
      * @return the responseEntity within the body.
      * @throws URISyntaxException
      * @throws IOException
      */
-    private JsonNode queryAggregatedObject(String id) throws URISyntaxException, IOException{
+    private JsonNode queryAggregatedObject(String id) throws URISyntaxException, IOException {
         HttpRequest httpRequest = new HttpRequest(HttpMethod.GET);
         String endpoint = "/queryAggregatedObject";
 
-        httpRequest.setHost(eiHost)
-            .setPort(port)
-            .addHeader("Content-type", "application/json")
-            .addParam("ID", id)
-            .setEndpoint(endpoint);
+        httpRequest.setHost(eiHost).setPort(port).addHeader("Content-type", "application/json").addParam("ID", id)
+                .setEndpoint(endpoint);
 
-        //The response contains the aggregated object as a jsonstring. Makes it this wierd to get out.
+        // The response contains the aggregated object as a jsonstring. Makes it this wierd to get out.
         ResponseEntity<String> response = httpRequest.performRequest();
-        JsonNode body =  objectMapper.readTree(response.getBody());
+        JsonNode body = objectMapper.readTree(response.getBody());
         JsonNode responseEntity = body.get("queryResponseEntity");
 
         return responseEntity;
