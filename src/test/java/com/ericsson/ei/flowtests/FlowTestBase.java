@@ -249,11 +249,10 @@ public abstract class FlowTestBase extends AbstractTestExecutionListener {
         long processedEvents = 0;
         while (processedEvents < eventsCount && stopTime > System.currentTimeMillis()) {
             processedEvents = countProcessedEvents(database, event_map);
-            LOGGER.info("Have gotten: " + processedEvents + " out of: " + eventsCount);
+            LOGGER.debug("Have gotten: " + processedEvents + " out of: " + eventsCount);
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
             } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(), e);
             }
         }
         TimeUnit.MILLISECONDS.sleep(5000);
