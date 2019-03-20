@@ -19,12 +19,15 @@ package com.ericsson.ei.mongoDBHandler.test;
 import static org.junit.Assert.assertTrue;
 
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.mongodb.MongoClient;
 
 import java.util.ArrayList;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +37,12 @@ import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
 
 public class MongoDBHandlerTest {
 
-    final Logger log = LoggerFactory.getLogger(MongoDBHandlerTest.class);
+    final static Logger log = LoggerFactory.getLogger(MongoDBHandlerTest.class);
 
-    private MongoDBHandler mongoDBHandler;
+    private static MongoDBHandler mongoDBHandler;
 
-    private MongodForTestsFactory testsFactory;
-    private MongoClient mongoClient = null;
+//    private MongodForTestsFactory testsFactory;
+    private static MongoClient mongoClient = null;
 
     private String dataBaseName = "EventStorageDBbbb";
     private String collectionName = "SampleEvents";
@@ -47,21 +50,26 @@ public class MongoDBHandlerTest {
     private String updateInput = "{\"id\":\"eventId\",\"type\":\"eventType11\",\"test_cases\" : [{\"event_id\" : \"testcaseid1\", \"test_data\" : \"testcase2data\"},{\"event_id\" : \"testcaseid3\", \"test_data\" : \"testcase3data\"}]}";
     private String condition = "{\"test_cases.event_id\" : \"testcaseid1\"}";
 
-    public void setUpEmbeddedMongo() throws Exception {
+    public static void setUpEmbeddedMongo() throws Exception {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
+//            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//            mongoClient = testsFactory.newMongo();
+        	mongoClient = EmbeddedMongo.newMongo();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
-    @Before
-    public void init() throws Exception {
-        setUpEmbeddedMongo();
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+    	setUpEmbeddedMongo();
         mongoDBHandler = new MongoDBHandler();
         mongoDBHandler.setMongoClient(mongoClient);
+    }
+    
+    @Before
+    public void init() throws Exception {        
         assertTrue(mongoDBHandler.insertDocument(dataBaseName, collectionName, input));
     }
 
@@ -95,8 +103,13 @@ public class MongoDBHandlerTest {
     @After
     public void dropCollection() {
         assertTrue(mongoDBHandler.dropDocument(dataBaseName, collectionName, condition));
-        mongoClient.close();
-        testsFactory.shutdown();
+//        mongoClient.close();
+//        testsFactory.shutdown();
 
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        EmbeddedMongo.shutDown();
     }
 }

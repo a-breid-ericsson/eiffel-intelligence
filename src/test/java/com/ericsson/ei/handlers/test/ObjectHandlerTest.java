@@ -26,6 +26,7 @@ import com.ericsson.ei.jmespath.JmesPathInterface;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.rules.RulesObject;
 import com.ericsson.ei.subscriptionhandler.SubscriptionHandler;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
@@ -48,7 +49,6 @@ public class ObjectHandlerTest {
 
     private ObjectHandler objHandler = new ObjectHandler();
 
-    private MongodForTestsFactory testsFactory;
     private MongoClient mongoClient = null;
 
     private MongoDBHandler mongoDBHandler = new MongoDBHandler();
@@ -69,8 +69,7 @@ public class ObjectHandlerTest {
 
     public void setUpEmbeddedMongo() throws Exception {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
+        	mongoClient = EmbeddedMongo.newMongo();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
@@ -113,10 +112,6 @@ public class ObjectHandlerTest {
     @After
     public void dropCollection() {
         mongoDBHandler.dropDocument(dataBaseName, collectionName, condition);
-        if (mongoClient != null)
-            mongoClient.close();
-        if (testsFactory != null)
-            testsFactory.shutdown();
-
+        EmbeddedMongo.shutDown();
     }
 }

@@ -20,6 +20,7 @@ import com.ericsson.ei.handlers.ObjectHandler;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.queryservice.ProcessAggregatedObject;
 import com.ericsson.ei.queryservice.ProcessMissedNotification;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -90,10 +91,11 @@ public class QueryServiceTest {
 
     public static void setUpEmbeddedMongo() throws Exception {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
-            String port = "" + mongoClient.getAddress().getPort();
-            System.setProperty("spring.data.mongodb.port", port);
+//            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//            mongoClient = testsFactory.newMongo();
+        	mongoClient = EmbeddedMongo.newMongo();
+//            String port = "" + mongoClient.getAddress().getPort();
+//            System.setProperty("spring.data.mongodb.port", port);
 
             aggregatedObject = FileUtils.readFileToString(new File(aggregatedPath));
             LOG.debug("The aggregatedObject is : " + aggregatedObject);
@@ -197,9 +199,10 @@ public class QueryServiceTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        if (mongoClient != null)
-            mongoClient.close();
-        if (testsFactory != null)
-            testsFactory.shutdown();
+    	EmbeddedMongo.shutDown();
+//        if (mongoClient != null)
+//            mongoClient.close();
+//        if (testsFactory != null)
+//            testsFactory.shutdown();
     }
 }

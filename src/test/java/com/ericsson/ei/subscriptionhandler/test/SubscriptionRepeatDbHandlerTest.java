@@ -33,6 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ericsson.ei.App;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.subscriptionhandler.SubscriptionRepeatDbHandler;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
@@ -66,22 +67,24 @@ public class SubscriptionRepeatDbHandlerTest {
 
     @BeforeClass
     public static void init() throws Exception {
-    testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-    mongoClient = testsFactory.newMongo();
-    mongoDBHandler = new MongoDBHandler();
-    mongoDBHandler.setMongoClient(mongoClient);
-    String port = "" + mongoClient.getAddress().getPort();
-    System.setProperty("spring.data.mongodb.port", port);
-    subsRepeatDbHandler.mongoDbHandler = mongoDBHandler;
+//    testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//    mongoClient = testsFactory.newMongo();
+    	mongoClient = EmbeddedMongo.newMongo();
+    	mongoDBHandler = new MongoDBHandler();
+    	mongoDBHandler.setMongoClient(mongoClient);
+//    	String port = "" + mongoClient.getAddress().getPort();
+//    	System.setProperty("spring.data.mongodb.port", port);
+    	subsRepeatDbHandler.mongoDbHandler = mongoDBHandler;
 
-    subsRepeatDbHandler.dataBaseName = subRepeatFlagDataBaseName;
-    subsRepeatDbHandler.collectionName = subRepeatFlagCollectionName;
+    	subsRepeatDbHandler.dataBaseName = subRepeatFlagDataBaseName;
+    	subsRepeatDbHandler.collectionName = subRepeatFlagCollectionName;
     }
 
     @AfterClass
     public static void close() {
-        testsFactory.shutdown();
-        mongoClient.close();
+//        testsFactory.shutdown();
+//        mongoClient.close();
+    	EmbeddedMongo.shutDown();
     }
 
     @Before

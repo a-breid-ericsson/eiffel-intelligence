@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.util.SocketUtils;
 
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.mongodb.MongoClient;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -23,7 +24,7 @@ import lombok.Getter;
 public class FlowTestConfigs {
 
     private AMQPBrokerManager amqpBroker;
-    private MongodForTestsFactory testsFactory;
+//    private MongodForTestsFactory testsFactory;
     private Queue queue = null;
     private RabbitAdmin admin;
     private ConnectionFactory cf;
@@ -66,8 +67,9 @@ public class FlowTestConfigs {
 
     private void setUpEmbeddedMongo() throws IOException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
+//            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//            mongoClient = testsFactory.newMongo();
+            mongoClient = EmbeddedMongo.newMongo();
             String port = "" + mongoClient.getAddress().getPort();
             System.setProperty("spring.data.mongodb.port", port);
         } catch (Exception e) {
@@ -88,10 +90,9 @@ public class FlowTestConfigs {
             // exception and go on
         }
 
-        if (mongoClient != null)
-            mongoClient.close();
-        if (testsFactory != null)
-            testsFactory.shutdown();
+        EmbeddedMongo.shutDown();
+//        if (testsFactory != null)
+//            testsFactory.shutdown();
 
     }
 

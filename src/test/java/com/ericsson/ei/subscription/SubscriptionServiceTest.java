@@ -51,6 +51,7 @@ import com.ericsson.ei.controller.model.Subscription;
 import com.ericsson.ei.exception.SubscriptionNotFoundException;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.services.ISubscriptionService;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
@@ -97,10 +98,11 @@ public class SubscriptionServiceTest {
     @BeforeClass
     public static void setMongoDB() throws IOException, JSONException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
-            String port = "" + mongoClient.getAddress().getPort();
-            System.setProperty("spring.data.mongodb.port", port);
+//            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//            mongoClient = testsFactory.newMongo();
+//            String port = "" + mongoClient.getAddress().getPort();
+//            System.setProperty("spring.data.mongodb.port", port);
+        	mongoClient = EmbeddedMongo.newMongo();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             e.printStackTrace();
@@ -123,10 +125,11 @@ public class SubscriptionServiceTest {
 
     @AfterClass
     public static void tearDownMongoDB() throws Exception {
-        if (mongoClient != null)
-            mongoClient.close();
-        if (testsFactory != null)
-            testsFactory.shutdown();
+    	EmbeddedMongo.shutDown();
+//        if (mongoClient != null)
+//            mongoClient.close();
+//        if (testsFactory != null)
+//            testsFactory.shutdown();
     }
 
     @Test

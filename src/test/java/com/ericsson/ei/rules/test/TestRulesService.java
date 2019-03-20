@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ericsson.ei.App;
 import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.services.IRuleCheckService;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.mongodb.MongoClient;
 
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -51,10 +52,11 @@ public class TestRulesService {
     @BeforeClass
     public static void setMongoDB() throws IOException, JSONException {
         try {
-            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-            mongoClient = testsFactory.newMongo();
-            String port = "" + mongoClient.getAddress().getPort();
-            System.setProperty("spring.data.mongodb.port", port);
+//            testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//            mongoClient = testsFactory.newMongo();
+        	mongoClient = EmbeddedMongo.newMongo();
+//            String port = "" + mongoClient.getAddress().getPort();
+//            System.setProperty("spring.data.mongodb.port", port);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             e.printStackTrace();
@@ -68,8 +70,9 @@ public class TestRulesService {
 
     @AfterClass
     public static void tearDownMongoDB() throws Exception {
-        mongoClient.close();
-        testsFactory.shutdown();
+//        mongoClient.close();
+//        testsFactory.shutdown();
+    	EmbeddedMongo.shutDown();
     }
 
     @Test

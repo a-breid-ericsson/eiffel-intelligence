@@ -59,6 +59,7 @@ import com.ericsson.ei.mongodbhandler.MongoDBHandler;
 import com.ericsson.ei.subscriptionhandler.InformSubscriber;
 import com.ericsson.ei.subscriptionhandler.RunSubscription;
 import com.ericsson.ei.subscriptionhandler.SendMail;
+import com.ericsson.ei.utils.EmbeddedMongo;
 import com.ericsson.ei.subscriptionhandler.SendHttpRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -132,10 +133,12 @@ public class SubscriptionHandlerTest {
     private QueryResponse queryResponse;
 
     public static void setUpEmbeddedMongo() throws Exception {
-        testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
-        mongoClient = testsFactory.newMongo();
-        String port = "" + mongoClient.getAddress().getPort();
-        System.setProperty("spring.data.mongodb.port", port);
+//        testsFactory = MongodForTestsFactory.with(Version.V4_0_2);
+//        mongoClient = testsFactory.newMongo();
+//        String port = "" + mongoClient.getAddress().getPort();
+//        System.setProperty("spring.data.mongodb.port", port);
+    	
+    	mongoClient = EmbeddedMongo.newMongo();
 
         aggregatedObject = FileUtils.readFileToString(new File(aggregatedPath), "UTF-8");
         aggregatedInternalObject = FileUtils.readFileToString(new File(aggregatedInternalPath), "UTF-8");
@@ -168,8 +171,9 @@ public class SubscriptionHandlerTest {
 
     @AfterClass
     public static void close() {
-        mongoClient.close();
-        testsFactory.shutdown();
+//        mongoClient.close();
+//        testsFactory.shutdown();
+    	EmbeddedMongo.shutDown();
     }
 
     @Before
