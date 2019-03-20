@@ -54,9 +54,9 @@ public class EmbeddedMongo {
             .net(new Net(ip, port, false))
             .build();
         System.setProperty("spring.data.mongodb.port", ""+port);
-        System.out.println("Starting mongodb port: " + port);
-        String stackTrace = Arrays.toString(new Exception().getStackTrace());
-        System.out.println(stackTrace);
+//        System.out.println("Starting mongodb port: " + port);
+//        String stackTrace = Arrays.toString(new Exception().getStackTrace());
+//        System.out.println(stackTrace);
                
 		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
 			.defaultsWithLogger(Command.MongoD,LOGGER)
@@ -72,7 +72,7 @@ public class EmbeddedMongo {
 	
 	public static void shutDown() {
 		String mongoPort = System.getProperty("spring.data.mongodb.port");
-		System.out.println("Closing mongodb port: " + mongoPort);
+//		System.out.println("Closing mongodb port: " + mongoPort);
 		mongodProcess.stop();
 		mongodExecutable.stop();
 		mongoClient.close();

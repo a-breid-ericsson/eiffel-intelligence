@@ -90,7 +90,7 @@ public class TestConfigs {
     		
     		int node1Port = SocketUtils.findAvailableTcpPort();
     		int node2Port = SocketUtils.findAvailableTcpPort();
-    		System.out.println("Faejked ERROR:Trying to start embedded message bus for tests on ports: " + node1Port + ", " + node2Port);
+//    		System.out.println("Faejked ERROR:Trying to start embedded message bus for tests on ports: " + node1Port + ", " + node2Port);
     		node1MongodExe = runtime
     				.prepare(new MongodConfigBuilder().version(Version.Main.V3_4).withLaunchArgument("--replSet", "rs0")
     						.cmdOptions(new MongoCmdOptionsBuilder().useNoJournal(false).build())
@@ -114,7 +114,7 @@ public class TestConfigs {
     		config.put("members", members);
 
     		adminDatabase.runCommand(new Document("replSetInitiate", config));
-    		System.out.println("Faejked ERROR:Started embedded message bus for tests on ports: " + node1Port + ", " + node2Port);
+//    		System.out.println("Faejked ERROR:Started embedded message bus for tests on ports: " + node1Port + ", " + node2Port);
 
     		//        System.out.println(">>>>>>>>" + adminDatabase.runCommand(new Document("replSetGetStatus", 1)));
     		//
