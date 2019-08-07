@@ -68,6 +68,11 @@ jobs:
         - mvn cobertura:cobertura -B
         - sudo apt-get install jq
         - curl -Ls -o codacy-coverage-reporter-assembly.jar $(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({content_type, browser_download_url} | select(.content_type | contains("java-archive"))) | .[0].browser_download_url')
+        - cd target/
+        - ls -la
+        - cd site/
+        - ls -la
+        - cd cobertura/
         - ls -la
         - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/cobertura/cobertura.xml
     - stage: deploy
