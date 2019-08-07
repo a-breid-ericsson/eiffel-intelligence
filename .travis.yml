@@ -66,7 +66,7 @@ jobs:
       before_script: skip
       script:
         - mvn cobertura:cobertura -B
-        - https://github.com/codacy/codacy-coverage-reporter/releases/download/6.0.2/codacy-coverage-reporter-6.0.2-assembly.jar
+        - curl -Ls -o codacy-coverage-reporter-assembly.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/6.0.2/codacy-coverage-reporter-6.0.2-assembly.jar
         - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/cobertura/coverage.xml
     - stage: deploy
       name: deployGitHubPages
