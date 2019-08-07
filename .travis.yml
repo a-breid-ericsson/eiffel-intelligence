@@ -37,6 +37,7 @@ before_deploy:
 # Using default stage 'test' for all our test jobs, and only running deploy stage
 # (after merge) to master branch
 stages:
+  - coverage
   - test
   - name: deploy
     if: branch = master
