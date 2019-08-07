@@ -429,9 +429,6 @@ public class SubscriptionValidatorTest {
         assertTrue(false);
     }
 
-    // TODO: Validator Unit tests for Jmepath syntax validator needs to be
-    // implemented here.
-
     /**
      * Unit tests for testing a whole Subscription Json object. Valid Result: true
      * or false
