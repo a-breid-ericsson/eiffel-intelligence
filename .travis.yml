@@ -62,6 +62,7 @@ jobs:
         - mvn verify -DskipUTs -Der.url=http://localhost:8084/search/ -Drabbitmq.exchange.name=ei-exchange -Dspring.mail.host=localhost -Dspring.mail.port=1025 -Dwaitlist.fixedRateResend=1 -B
     - stage: coverage
       name: coverage
+      before_script: skip
       script:
         - sudo apt-get install jq
         - curl $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({content_type, browser_download_url} | select(.content_type | 
