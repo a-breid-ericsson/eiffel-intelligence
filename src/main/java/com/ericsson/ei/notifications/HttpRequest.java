@@ -123,15 +123,6 @@ public class HttpRequest {
     private void createRequest() {
         boolean isApplicationXWwwFormUrlEncoded = MediaType.valueOf(contentType)
                                                            .equals(MediaType.APPLICATION_FORM_URLENCODED);
-
-        switch (3) {
-        case 1:
-            LOGGER.error("Hello");
-            break;
-        case 2:
-            LOGGER.error("Hello");
-            break;
-        }
         if (isApplicationXWwwFormUrlEncoded) {
             request = new HttpEntity<MultiValueMap<String, String>>(
                 this.mapNotificationMessage, this.headers);
